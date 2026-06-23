@@ -532,6 +532,124 @@
   .card .item-texto { color: var(--cafe); }
   .card .item-check { border-color: rgba(43, 24, 16, 0.3); }
 
+  /* ============ TAREFAS DENTRO DO CARD (expansível) ============ */
+  .card.expandido {
+    box-shadow: 0 1px 0 rgba(0,0,0,0.08), 0 8px 24px rgba(0,0,0,0.28);
+    border-left: 3px solid var(--rosa);
+    padding-left: 17px;
+  }
+
+  .toggle-tasks {
+    display: inline-flex !important;
+    align-items: center;
+    gap: 6px;
+  }
+  .chevron {
+    display: inline-block;
+    font-size: 11px;
+    transition: transform 0.18s ease;
+    color: var(--rosa-2);
+  }
+  .chevron.aberto { transform: rotate(90deg); }
+
+  .card-tasks {
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px dashed rgba(43, 24, 16, 0.2);
+  }
+
+  .task-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(43, 24, 16, 0.08);
+  }
+  .task-item:last-of-type { border-bottom: none; }
+
+  .task-item .item-check {
+    width: 18px;
+    height: 18px;
+    border: 1.5px solid rgba(43, 24, 16, 0.35);
+    border-radius: 3px;
+    cursor: pointer;
+    flex-shrink: 0;
+    margin-top: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    transition: all 0.15s;
+  }
+  .task-item .item-check.feito {
+    background: var(--rosa);
+    border-color: var(--rosa);
+  }
+  .task-item .item-check.feito::after {
+    content: '✓';
+    color: white;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .task-texto {
+    flex: 1;
+    font-size: 14px;
+    color: var(--cafe);
+    line-height: 1.4;
+    cursor: text;
+    outline: none;
+    padding: 1px 2px;
+    border-radius: 2px;
+  }
+  .task-texto:focus { background: rgba(230, 63, 139, 0.06); }
+  .task-texto.feito {
+    text-decoration: line-through;
+    opacity: 0.45;
+  }
+
+  .task-delete {
+    background: none;
+    border: none;
+    color: rgba(43, 24, 16, 0.3);
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 1;
+    padding: 0 4px;
+    opacity: 0;
+    transition: opacity 0.15s, color 0.15s;
+  }
+  .task-item:hover .task-delete { opacity: 1; }
+  .task-delete:hover { color: var(--rosa); }
+
+  .task-add-row {
+    margin-top: 10px;
+    padding-top: 8px;
+  }
+  .task-add-input {
+    width: 100%;
+    background: transparent !important;
+    color: var(--cafe) !important;
+    border: 1px dashed rgba(43, 24, 16, 0.2) !important;
+    padding: 8px 10px !important;
+    font-size: 13px !important;
+    border-radius: 4px;
+  }
+  .task-add-input::placeholder {
+    color: rgba(43, 24, 16, 0.4);
+    font-style: italic;
+  }
+  .task-add-input:focus {
+    border-style: solid !important;
+    border-color: var(--rosa) !important;
+  }
+
+  /* Em mobile, task delete sempre visível */
+  @media (max-width: 600px) {
+    .task-delete { opacity: 1; }
+    .task-item { padding: 10px 0; }
+  }
+
   /* ============ INBOX (rail direita) ============ */
   .rail {
     position: sticky;
@@ -842,9 +960,20 @@
       },
       musica: {
         projetos: [
-          { id: id(), nome: 'Projeto Janu', status: 'ativo', descricao: 'Carreira solo principal. Próximo single: Venha (afrobeat/bregafunk).' },
-          { id: id(), nome: 'Quiçaça', status: 'ativo', descricao: 'Avaliar continuidade no Q3.' },
-          { id: id(), nome: 'Cumbia das Antigas', status: 'pausado', descricao: 'Decidir: retomar ou encerrar?' },
+          { id: id(), nome: 'Projeto Janu', status: 'ativo', descricao: 'Carreira solo principal. Próximo single: Venha (afrobeat/bregafunk).', tarefas: [
+            { id: id(), texto: '10 super sucessos vol II', feito: false },
+            { id: id(), texto: 'Novas composições', feito: false },
+          ]},
+          { id: id(), nome: 'Quiçaça', status: 'ativo', descricao: 'Avaliar continuidade no Q3.', tarefas: [
+            { id: id(), texto: 'Lançamento de clipe', feito: false },
+            { id: id(), texto: 'Show dia 04 de Julho', feito: false },
+            { id: id(), texto: 'Show de aniversário', feito: false },
+          ]},
+          { id: id(), nome: 'Cumbia das Antigas', status: 'pausado', descricao: 'Decidir: retomar ou encerrar?', tarefas: [
+            { id: id(), texto: 'Música Nova', feito: false },
+            { id: id(), texto: 'Show de São João', feito: false },
+            { id: id(), texto: 'Clipe', feito: false },
+          ]},
         ],
         banco: [
           { id: id(), titulo: 'Venha', fase: 'mix', notas: 'Instrumental técnico finalizado em Logic. Falta voz final.' },
@@ -852,19 +981,19 @@
       },
       livros: {
         projetos: [
-          { id: id(), nome: 'A Banda de Apoio: 100 IAs para Criativos', status: 'ativo', descricao: 'Lançamento. Atualizar info do Rows (shutdown mai/2026).' },
-          { id: id(), nome: 'Ninguém Está Ileso de Ser um Merda', status: 'ativo', descricao: 'Renato Neto. Premio Latinoamericana Independiente — mai/2026.' },
-          { id: id(), nome: 'FIVELA (romance)', status: 'pausado', descricao: 'Story bible pronto. Retomar depois do lançamento.' },
+          { id: id(), nome: 'A Banda de Apoio: 100 IAs para Criativos', status: 'ativo', descricao: 'Lançamento. Atualizar info do Rows (shutdown mai/2026).', tarefas: [] },
+          { id: id(), nome: 'Ninguém Está Ileso de Ser um Merda', status: 'ativo', descricao: 'Renato Neto. Premio Latinoamericana Independiente — mai/2026.', tarefas: [] },
+          { id: id(), nome: 'FIVELA (romance)', status: 'pausado', descricao: 'Story bible pronto. Retomar depois do lançamento.', tarefas: [] },
         ],
         ideias: [],
       },
       labs: {
         produtos: [
-          { id: id(), nome: 'MAESTRO AI', status: 'ativo', descricao: 'Plataforma de Inteligência Criativa. Demo FAPEAL Centelha 3.' },
-          { id: id(), nome: 'RASTRO', status: 'ativo', descricao: 'Memória geolocalizada. Deployed no GitHub Pages.' },
-          { id: id(), nome: 'SYNFONYA', status: 'pausado', descricao: 'Instalação audiovisual participativa.' },
-          { id: id(), nome: 'TRILHA', status: 'pausado', descricao: 'Enraizamento territorial + token + jardim generativo.' },
-          { id: id(), nome: 'Pulso do Brasil', status: 'pausado', descricao: 'Eletrocardiograma emocional (Three.js + Supabase).' },
+          { id: id(), nome: 'MAESTRO AI', status: 'ativo', descricao: 'Plataforma de Inteligência Criativa. Demo FAPEAL Centelha 3.', tarefas: [] },
+          { id: id(), nome: 'RASTRO', status: 'ativo', descricao: 'Memória geolocalizada. Deployed no GitHub Pages.', tarefas: [] },
+          { id: id(), nome: 'SYNFONYA', status: 'pausado', descricao: 'Instalação audiovisual participativa.', tarefas: [] },
+          { id: id(), nome: 'TRILHA', status: 'pausado', descricao: 'Enraizamento territorial + token + jardim generativo.', tarefas: [] },
+          { id: id(), nome: 'Pulso do Brasil', status: 'pausado', descricao: 'Eletrocardiograma emocional (Three.js + Supabase).', tarefas: [] },
         ],
       },
       financeiro: {
@@ -928,6 +1057,7 @@
         for (const k of Object.keys(def)) {
           if (!state[k]) state[k] = def[k];
         }
+        migrateProjectTasks();
       } else {
         state = defaultState();
         saveState();
@@ -936,6 +1066,45 @@
       state = defaultState();
       try { saveState(); } catch {}
     }
+  }
+
+  // Garante que todo projeto tenha array de tarefas + faz seed única dos nomes conhecidos
+  function migrateProjectTasks() {
+    const allProjectLists = [
+      state.musica.projetos,
+      state.livros.projetos,
+      state.labs.produtos,
+    ];
+
+    // 1. Garante tarefas: [] em todos os projetos
+    allProjectLists.forEach(lista => {
+      lista.forEach(p => {
+        if (!Array.isArray(p.tarefas)) p.tarefas = [];
+      });
+    });
+
+    // 2. Seed única pra projetos com nome conhecido (só rola uma vez)
+    const SEED_FLAG = 'januverso:seeded-project-tasks-v1';
+    if (!localStorage.getItem(SEED_FLAG)) {
+      const SEEDS = {
+        'Projeto Janu': ['10 super sucessos vol II', 'Novas composições'],
+        'Quiçaça': ['Lançamento de clipe', 'Show dia 04 de Julho', 'Show de aniversário'],
+        'Cumbia das Antigas': ['Música Nova', 'Show de São João', 'Clipe'],
+        'VENHA': ['Finalizar mix', 'Masterizar'],
+        'Venha': ['Finalizar mix', 'Masterizar'],
+      };
+      allProjectLists.forEach(lista => {
+        lista.forEach(p => {
+          const seed = SEEDS[p.nome];
+          if (seed && p.tarefas.length === 0) {
+            p.tarefas = seed.map(t => ({ id: id(), texto: t, feito: false }));
+          }
+        });
+      });
+      localStorage.setItem(SEED_FLAG, '1');
+    }
+
+    saveState();
   }
 
   let saveTimer;
@@ -1076,19 +1245,44 @@
     });
   }
 
+  // Set em memória pra controlar quais cards estão expandidos
+  const expandedCards = new Set();
+
   // ============ RENDER: PROJETO CARD ============
   function projetoCard(p, listaRef) {
     const statusClass = `status-${p.status}`;
-    const proxStatus = { ativo: 'pausado', pausado: 'encerrar', encerrar: 'ativo' };
     const statusLabel = { ativo: 'Ativo', pausado: 'Pausado', encerrar: 'Encerrar?' };
+    const tarefas = p.tarefas || [];
+    const feitas = tarefas.filter(t => t.feito).length;
+    const expandido = expandedCards.has(p.id);
+    const temTarefas = tarefas.length > 0;
+
     return `
-      <div class="card" data-pid="${p.id}">
+      <div class="card ${expandido ? 'expandido' : ''}" data-pid="${p.id}">
         <button class="status ${statusClass}" data-action="cycle-status">${statusLabel[p.status]}</button>
         <div class="card-titulo" contenteditable="true" data-field="nome">${escapeHtml(p.nome)}</div>
         <div class="card-descricao" contenteditable="true" data-field="descricao">${escapeHtml(p.descricao || '')}</div>
         <div class="card-actions">
+          <button class="btn-mini toggle-tasks" data-action="toggle-tasks">
+            <span class="chevron ${expandido ? 'aberto' : ''}">▸</span>
+            ${temTarefas ? `${feitas}/${tarefas.length} tarefas` : 'adicionar tarefas'}
+          </button>
           <button class="btn-mini delete" data-action="delete">excluir</button>
         </div>
+        ${expandido ? `
+          <div class="card-tasks">
+            ${tarefas.map(t => `
+              <div class="task-item" data-tid="${t.id}">
+                <div class="item-check ${t.feito ? 'feito' : ''}" data-task-action="toggle"></div>
+                <div class="task-texto ${t.feito ? 'feito' : ''}" contenteditable="true" data-task-action="edit">${escapeHtml(t.texto)}</div>
+                <button class="task-delete" data-task-action="delete">×</button>
+              </div>
+            `).join('')}
+            <div class="task-add-row">
+              <input type="text" class="task-add-input" placeholder="+ nova tarefa">
+            </div>
+          </div>
+        ` : ''}
       </div>
     `;
   }
@@ -1098,6 +1292,7 @@
       const pid = el.dataset.pid;
       const p = lista.find(x => x.id === pid);
       if (!p) return;
+      if (!Array.isArray(p.tarefas)) p.tarefas = [];
 
       el.querySelector('[data-action="cycle-status"]').addEventListener('click', () => {
         const next = { ativo: 'pausado', pausado: 'encerrar', encerrar: 'ativo' };
@@ -1106,10 +1301,16 @@
       });
 
       el.querySelector('[data-action="delete"]').addEventListener('click', () => {
-        if (confirm(`Excluir "${p.nome}"?`)) {
+        if (confirm(`Excluir "${p.nome}" e todas as suas tarefas?`)) {
           const i = lista.findIndex(x => x.id === pid);
-          if (i >= 0) { lista.splice(i, 1); saveState(); render(); }
+          if (i >= 0) { lista.splice(i, 1); expandedCards.delete(pid); saveState(); render(); }
         }
+      });
+
+      el.querySelector('[data-action="toggle-tasks"]').addEventListener('click', () => {
+        if (expandedCards.has(pid)) expandedCards.delete(pid);
+        else expandedCards.add(pid);
+        render();
       });
 
       ['nome', 'descricao'].forEach(field => {
@@ -1124,6 +1325,55 @@
           });
         }
       });
+
+      // Tarefas dentro do card expandido
+      el.querySelectorAll('.task-item').forEach(taskEl => {
+        const tid = taskEl.dataset.tid;
+        const tarefa = p.tarefas.find(t => t.id === tid);
+        if (!tarefa) return;
+
+        taskEl.querySelector('[data-task-action="toggle"]').addEventListener('click', () => {
+          tarefa.feito = !tarefa.feito;
+          saveState(); render();
+        });
+
+        taskEl.querySelector('[data-task-action="delete"]').addEventListener('click', () => {
+          const i = p.tarefas.findIndex(t => t.id === tid);
+          if (i >= 0) { p.tarefas.splice(i, 1); saveState(); render(); }
+        });
+
+        const tNode = taskEl.querySelector('[data-task-action="edit"]');
+        tNode.addEventListener('blur', () => {
+          tarefa.texto = tNode.textContent.trim();
+          if (!tarefa.texto) {
+            const i = p.tarefas.findIndex(t => t.id === tid);
+            if (i >= 0) { p.tarefas.splice(i, 1); saveState(); render(); }
+          } else { saveState(); }
+        });
+        tNode.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') { e.preventDefault(); tNode.blur(); }
+        });
+      });
+
+      // Input pra adicionar nova tarefa
+      const addInput = el.querySelector('.task-add-input');
+      if (addInput) {
+        const adicionarTarefa = () => {
+          const v = addInput.value.trim();
+          if (!v) return;
+          p.tarefas.push({ id: id(), texto: v, feito: false });
+          addInput.value = '';
+          saveState(); render();
+          // Re-foco no input recém-renderizado pra continuar adicionando rápido
+          setTimeout(() => {
+            const novo = document.querySelector(`[data-pid="${pid}"] .task-add-input`);
+            if (novo) novo.focus();
+          }, 0);
+        };
+        addInput.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') { e.preventDefault(); adicionarTarefa(); }
+        });
+      }
     });
   }
 
@@ -1172,6 +1422,13 @@
 
         <div class="painel">
           <div class="painel-titulo">Universo em números</div>
+          <div class="indicador">
+            <span class="indicador-label">Tarefas em aberto</span>
+            <span class="indicador-valor destaque">${
+              [...state.musica.projetos, ...state.livros.projetos, ...state.labs.produtos]
+                .reduce((s, p) => s + (p.tarefas || []).filter(t => !t.feito).length, 0)
+            }</span>
+          </div>
           <div class="indicador">
             <span class="indicador-label">Músicas no banco</span>
             <span class="indicador-valor">${state.musica.banco.length}</span>
