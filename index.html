@@ -803,6 +803,122 @@
   }
   .toast.show { transform: translateY(0); opacity: 1; }
 
+  /* ============ METAS ============ */
+  .meta-card {
+    transition: border-color 0.2s;
+    border: 1px solid var(--linha);
+  }
+  .meta-card.completo {
+    border-color: var(--sucesso);
+    background: linear-gradient(135deg, var(--ink-2) 0%, rgba(107, 157, 63, 0.08) 100%);
+  }
+
+  .meta-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+  }
+
+  .meta-nome {
+    font-family: 'Fraunces', serif;
+    font-size: 17px;
+    font-weight: 500;
+    color: var(--cream);
+    flex: 1;
+    min-width: 120px;
+    outline: none;
+    padding: 2px 4px;
+    border-radius: 3px;
+    cursor: text;
+  }
+  .meta-nome:focus { background: rgba(230, 63, 139, 0.1); }
+
+  .meta-acoes {
+    display: flex;
+    gap: 6px;
+  }
+  .meta-depositar {
+    color: var(--sucesso) !important;
+    border-color: rgba(107, 157, 63, 0.4) !important;
+  }
+  .meta-depositar:hover {
+    background: rgba(107, 157, 63, 0.1) !important;
+  }
+
+  .meta-valores {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--mostarda);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .meta-atual, .meta-alvo {
+    outline: none;
+    padding: 2px 6px;
+    border-radius: 3px;
+    cursor: text;
+    transition: background 0.15s;
+    min-width: 30px;
+  }
+  .meta-atual:hover, .meta-alvo:hover { background: rgba(229, 165, 10, 0.08); }
+  .meta-atual:focus, .meta-alvo:focus {
+    background: rgba(229, 165, 10, 0.15);
+    color: var(--cream);
+  }
+  .meta-separador { color: rgba(242, 237, 228, 0.3); }
+  .meta-pct {
+    margin-left: auto;
+    color: var(--cream);
+    opacity: 0.7;
+    font-size: 12px;
+    font-weight: 500;
+  }
+  .meta-card.completo .meta-pct { color: var(--sucesso); opacity: 1; font-weight: 600; }
+
+  .meta-barra {
+    height: 8px;
+    background: var(--ink-3);
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.3);
+  }
+  .meta-barra-preenchimento {
+    height: 100%;
+    background: linear-gradient(90deg, var(--mostarda) 0%, #F5B829 100%);
+    border-radius: 4px;
+    transition: width 0.6s cubic-bezier(0.22, 0.9, 0.4, 1);
+    box-shadow: 0 0 12px rgba(229, 165, 10, 0.4);
+  }
+  .meta-card.completo .meta-barra-preenchimento {
+    background: linear-gradient(90deg, var(--sucesso) 0%, #88B85F 100%);
+    box-shadow: 0 0 16px rgba(107, 157, 63, 0.5);
+  }
+
+  .meta-deposito-row {
+    display: flex;
+    gap: 6px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px dashed var(--linha);
+    align-items: center;
+  }
+  .meta-deposito-input { flex: 1; }
+  .meta-deposito-ok { padding: 8px 14px; font-size: 11px; }
+  .meta-deposito-cancel { padding: 8px 12px; font-size: 11px; }
+
+  @media (max-width: 600px) {
+    .meta-top { align-items: flex-start; }
+    .meta-acoes { width: 100%; justify-content: flex-end; margin-top: 4px; }
+    .meta-deposito-row { flex-wrap: wrap; }
+    .meta-deposito-input { width: 100%; flex-basis: 100%; }
+  }
+
   /* ============ LOADING ============ */
   .loading {
     text-align: center;
@@ -1681,18 +1797,42 @@
         <h3 style="font-family:'Fraunces',serif; font-size:22px; font-weight:500; margin-bottom:12px;">Metas</h3>
         ${state.financeiro.metas.map(m => {
           const pct = m.valor > 0 ? Math.min(100, (m.atual/m.valor)*100) : 0;
+          const completo = pct >= 100;
           return `
-            <div class="painel" style="margin-bottom: 10px;">
-              <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px;">
-                <strong style="font-family:'Fraunces',serif; font-size:16px;">${escapeHtml(m.nome)}</strong>
-                <span style="font-family:'JetBrains Mono',monospace; color:var(--mostarda);">${fmtBRL(m.atual)} / ${fmtBRL(m.valor)}</span>
+            <div class="painel meta-card ${completo ? 'completo' : ''}" data-meta-id="${m.id}" style="margin-bottom: 12px;">
+              <div class="meta-top">
+                <strong class="meta-nome" contenteditable="true" data-meta-field="nome">${escapeHtml(m.nome)}</strong>
+                <div class="meta-acoes">
+                  <button class="btn-mini meta-depositar" data-action="depositar" title="Depositar valor">+ depósito</button>
+                  <button class="btn-mini delete" data-action="delete-meta" title="Excluir meta">×</button>
+                </div>
               </div>
-              <div style="height:6px; background:var(--ink-3); border-radius:3px; overflow:hidden;">
-                <div style="width:${pct}%; height:100%; background:var(--mostarda);"></div>
+              <div class="meta-valores">
+                <span class="meta-atual" contenteditable="true" data-meta-field="atual" data-original="${m.atual}">${fmtBRL(m.atual)}</span>
+                <span class="meta-separador">/</span>
+                <span class="meta-alvo" contenteditable="true" data-meta-field="valor" data-original="${m.valor}">${fmtBRL(m.valor)}</span>
+                <span class="meta-pct">${pct.toFixed(0)}%</span>
+              </div>
+              <div class="meta-barra">
+                <div class="meta-barra-preenchimento" style="width:${pct}%;"></div>
+              </div>
+              <div class="meta-deposito-row" data-meta-deposit="${m.id}" style="display:none;">
+                <input type="text" inputmode="decimal" class="meta-deposito-input" placeholder="Quanto? (ex: 500 ou 1.500,00)">
+                <button class="btn meta-deposito-ok">OK</button>
+                <button class="btn-ghost meta-deposito-cancel">cancelar</button>
               </div>
             </div>
           `;
         }).join('')}
+
+        <div class="add-projeto" style="margin-top: 14px;">
+          <h4>+ Nova meta</h4>
+          <div class="form-row">
+            <input type="text" id="nm-nome" placeholder="Nome (ex: Fazenda)">
+            <input type="text" inputmode="decimal" id="nm-valor" placeholder="Valor alvo (ex: 250.000)">
+          </div>
+          <button class="btn" id="nm-add">Criar meta</button>
+        </div>
       </div>
     `;
   }
@@ -1742,6 +1882,112 @@
         if (i >= 0) { lista.splice(i,1); saveState(); render(); }
       });
     });
+
+    // ===== METAS =====
+    c.querySelectorAll('.meta-card').forEach(el => {
+      const metaId = el.dataset.metaId;
+      const meta = state.financeiro.metas.find(m => m.id === metaId);
+      if (!meta) return;
+
+      // Editar nome inline
+      const nomeEl = el.querySelector('[data-meta-field="nome"]');
+      nomeEl.addEventListener('blur', () => {
+        const v = nomeEl.textContent.trim();
+        if (v) { meta.nome = v; saveState(); }
+        else { nomeEl.textContent = meta.nome; }
+      });
+      nomeEl.addEventListener('keydown', e => {
+        if (e.key === 'Enter') { e.preventDefault(); nomeEl.blur(); }
+      });
+
+      // Editar atual e valor inline (parse BR-aware)
+      ['atual', 'valor'].forEach(field => {
+        const node = el.querySelector(`[data-meta-field="${field}"]`);
+        if (!node) return;
+        // Ao focar, mostra só o número raw pra facilitar edição
+        node.addEventListener('focus', () => {
+          node.textContent = String(meta[field] || 0).replace('.', ',');
+          // Seleciona tudo
+          const range = document.createRange();
+          range.selectNodeContents(node);
+          const sel = window.getSelection();
+          sel.removeAllRanges();
+          sel.addRange(range);
+        });
+        node.addEventListener('blur', () => {
+          const novo = parseBRNumber(node.textContent);
+          if (novo >= 0) {
+            meta[field] = novo;
+            saveState();
+            render();
+          } else {
+            node.textContent = fmtBRL(meta[field]);
+          }
+        });
+        node.addEventListener('keydown', e => {
+          if (e.key === 'Enter') { e.preventDefault(); node.blur(); }
+          if (e.key === 'Escape') {
+            node.textContent = fmtBRL(meta[field]);
+            node.blur();
+          }
+        });
+      });
+
+      // Botão de depositar (abre input inline)
+      const depBtn = el.querySelector('[data-action="depositar"]');
+      const depRow = el.querySelector('[data-meta-deposit]');
+      const depInput = el.querySelector('.meta-deposito-input');
+      const depOk = el.querySelector('.meta-deposito-ok');
+      const depCancel = el.querySelector('.meta-deposito-cancel');
+
+      depBtn.addEventListener('click', () => {
+        depRow.style.display = 'flex';
+        depInput.value = '';
+        setTimeout(() => depInput.focus(), 50);
+      });
+
+      const confirmarDeposito = () => {
+        const v = parseBRNumber(depInput.value);
+        if (!v || v === 0) { depRow.style.display = 'none'; return; }
+        meta.atual = (meta.atual || 0) + v;
+        saveState();
+        toast(`+ ${fmtBRL(v)} em ${meta.nome}`);
+        render();
+      };
+
+      depOk.addEventListener('click', confirmarDeposito);
+      depCancel.addEventListener('click', () => { depRow.style.display = 'none'; });
+      depInput.addEventListener('keydown', e => {
+        if (e.key === 'Enter') { e.preventDefault(); confirmarDeposito(); }
+        if (e.key === 'Escape') { depRow.style.display = 'none'; }
+      });
+
+      // Excluir meta
+      el.querySelector('[data-action="delete-meta"]').addEventListener('click', () => {
+        if (confirm(`Excluir meta "${meta.nome}"?`)) {
+          const i = state.financeiro.metas.findIndex(m => m.id === metaId);
+          if (i >= 0) { state.financeiro.metas.splice(i, 1); saveState(); render(); }
+        }
+      });
+    });
+
+    // Criar nova meta
+    const nmNome = c.querySelector('#nm-nome');
+    const nmValor = c.querySelector('#nm-valor');
+    const nmAdd = c.querySelector('#nm-add');
+    if (nmAdd) {
+      const criarMeta = () => {
+        const nome = nmNome.value.trim();
+        const valor = parseBRNumber(nmValor.value);
+        if (!nome || !valor || valor <= 0) { toast('Preencha nome e valor da meta'); return; }
+        state.financeiro.metas.push({ id: id(), nome, valor, atual: 0 });
+        nmNome.value = ''; nmValor.value = '';
+        saveState(); render();
+        toast('Meta criada');
+      };
+      nmAdd.addEventListener('click', criarMeta);
+      [nmNome, nmValor].forEach(i => i.addEventListener('keydown', e => { if (e.key === 'Enter') criarMeta(); }));
+    }
   }
 
   function renderDelegacao() {
