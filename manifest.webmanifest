@@ -1,0 +1,20 @@
+{
+  "name": "JANUVERSO OS",
+  "short_name": "JANUVERSO",
+  "description": "Sistema operacional pessoal — Janu Leite",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0F1B2D",
+  "theme_color": "#0F1B2D",
+  "lang": "pt-BR",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

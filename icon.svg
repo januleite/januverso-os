@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- fundo: noite do agreste -->
+  <rect width="512" height="512" fill="#0F1B2D"/>
+
+  <!-- carimbo: dois círculos rosa brega -->
+  <g transform="translate(256 256) rotate(-6)">
+    <circle r="190" fill="none" stroke="#E63F8B" stroke-width="10"/>
+    <circle r="168" fill="none" stroke="#E63F8B" stroke-width="2" stroke-dasharray="8 10" opacity="0.55"/>
+
+    <!-- J no centro, Fraunces italic vibes -->
+    <text
+      y="60"
+      font-family="Georgia, 'Times New Roman', serif"
+      font-size="240"
+      font-weight="700"
+      font-style="italic"
+      fill="#E63F8B"
+      text-anchor="middle">J</text>
+
+    <!-- label inferior -->
+    <text
+      y="130"
+      font-family="-apple-system, system-ui, sans-serif"
+      font-size="22"
+      font-weight="600"
+      letter-spacing="5"
+      fill="#E63F8B"
+      text-anchor="middle">JANUVERSO</text>
+
+    <!-- pingo mostarda (acento brega) -->
+    <circle cx="0" cy="-130" r="6" fill="#E5A50A"/>
+  </g>
+</svg>
