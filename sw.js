@@ -1,7 +1,7 @@
 // JANUVERSO OS — Service Worker
 // Cacheia o app shell pra rodar offline e ser instalável como PWA
 
-const VERSION = 'januverso-v1';
+const VERSION = 'januverso-v2';
 const SHELL = [
   './',
   './index.html',
